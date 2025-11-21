@@ -21,6 +21,16 @@
     </style>
 </head>
 <body class="bg-school min-h-screen flex items-center justify-center">
+    <div id="preloader" class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative flex justify-center items-center">
+            <div class="absolute animate-ping w-24 h-24 rounded-full bg-green-200 opacity-75"></div>
+            <div class="relative w-20 h-20 bg-white rounded-full border-4 border-yellow-400 shadow-lg flex items-center justify-center p-1 z-10">
+                {{-- GANTI DENGAN LOGO ANDA --}}
+                <img src="{{ asset('images/SD.png') }}" class="w-full h-full object-contain rounded-full animate-pulse">
+            </div>
+        </div>
+        <p class="mt-4 text-[#65825C] font-bold text-sm tracking-widest animate-pulse">MEMUAT...</p>
+    </div>
     <div class="glass-overlay absolute inset-0 z-0"></div>
     
     <div class="relative z-10 w-full max-w-4xl px-4">
@@ -30,6 +40,14 @@
     <script>
         // Script sederhana untuk interaksi
         @yield('scripts')
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            preloader.classList.add('opacity-0'); // Efek Fade Out
+            
+            setTimeout(() => {
+                preloader.style.display = 'none'; // Hilangkan elemen
+            }, 500); // Tunggu 0.5 detik sesuai durasi transisi
+        });
     </script>
 </body>
 </html>

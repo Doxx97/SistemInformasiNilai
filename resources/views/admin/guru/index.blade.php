@@ -24,7 +24,7 @@
             <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-xs">{{ session('success') }}</div>
         @endif
 
-        <form action="{{ route('admin.guru.store') }}" method="POST" class="space-y-3" enctype="multipart/form-data">
+        <form id="formTambahGuru" action="{{ route('admin.guru.store') }}" method="POST" class="space-y-3" enctype="multipart/form-data">
             @csrf
             
             <div>
@@ -183,5 +183,16 @@
             }
         }
     }
+    document.getElementById('formTambahGuru').addEventListener('submit', function() {
+        Swal.fire({
+            title: 'Menyimpan Data...',
+            html: 'Jangan tutup halaman ini.',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    });
 </script>
 @endsection

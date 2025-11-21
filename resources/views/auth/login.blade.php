@@ -40,7 +40,7 @@
         <h1 class="text-2xl font-bold text-black mb-2 text-center">Selamat Datang!</h1>
         <p class="text-gray-500 text-sm mb-8 text-center">Silahkan login untuk melanjutkan akses.</p>
 
-        <form action="{{ route('login.process', $role) }}" method="POST" class="space-y-5">
+        <form id="loginForm" action="{{ route('login.process', $role) }}" method="POST" class="space-y-5">
             @csrf
             
             {{-- 1. LOGIN WALI MURID --}}
@@ -97,4 +97,32 @@
         </form>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Tangkap event submit form
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Tampilkan Loading SweetAlert
+        Swal.fire({
+            title: 'Mohon Tunggu...',
+            text: 'Sedang memverifikasi akun Anda',
+            allowOutsideClick: false, // User gabisa tutup paksa
+            allowEscapeKey: false,
+            showConfirmButton: false, // Hilangkan tombol OK
+            didOpen: () => {
+                Swal.showLoading(); // Munculkan animasi putar-putar
+            }
+        });
+    });
+
+    // Cek jika ada error validasi dari Laravel (Login Gagal)
+    @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Login Gagal!',
+            text: '{{ $errors->first() }}',
+            confirmButtonColor: '#d33'
+        });
+    @endif
+</script>
 @endsection
