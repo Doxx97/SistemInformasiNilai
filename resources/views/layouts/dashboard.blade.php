@@ -176,6 +176,32 @@
                 preloader.style.display = 'none'; // Hilangkan elemen
             }, 500); // Tunggu 0.5 detik sesuai durasi transisi
         });
+        @if(session('alert-bandel'))
+            Swal.fire({
+                icon: 'warning', // Ikon segitiga kuning seru
+                title: 'Akses Ditolak!',
+                text: "{{ session('alert-bandel') }}",
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Kembali',
+                backdrop: `
+                    rgba(0,0,123,0.4)
+                    left top
+                    no-repeat
+                `
+            });
+            
+            // Opsional: Bunyikan suara 'beep' error jika browser mengizinkan (bisa di-skip)
+        @endif
+
+        // Menangani session error biasa (seperti login gagal)
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: "{{ session('error') }}",
+                confirmButtonColor: '#65825C'
+            });
+        @endif
     </script>
 </body>
 </html>

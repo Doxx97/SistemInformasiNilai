@@ -9,17 +9,30 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, $role)
     {
-        // Cek apakah sudah login?
+        // 1. Cek apakah user login?
         if (!Auth::check()) {
-            return redirect('/');
+            return redirect()->route('landing')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Cek apakah role user sesuai dengan yang diminta route?
+        // 2. Cek apakah role user SESUAI dengan yang diminta route?
         if (Auth::user()->role !== $role) {
-            // Jika salah kamar, tendang ke dashboard yang benar
-            return redirect('/dashboard/' . Auth::user()->role);
+            
+            // --- LOGIKA "USER BANDEL" ---
+            
+            // Tentukan pesan peringatan
+            $pesan = "Eits! Anda mencoba masuk ke area terlarang.";
+            if($role == 'admin') {
+                $pesan = "Anda bukan Admin! Akses ditolak.";
+            } elseif($role == 'guru') {
+                $pesan = "Halaman ini khusus Guru.";
+            }
+
+            // Kembalikan user ke Dashboard-nya masing-masing
+            // Asumsi nama route dashboard kita: 'dashboard.admin', 'dashboard.guru', 'dashboard.walimurid'
+            return redirect()->route('dashboard.' . Auth::user()->role)
+                             ->with('alert-bandel', $pesan);
         }
 
         return $next($request);
