@@ -12,3 +12,6 @@ Account dummy for login
   NISN	   : 35050664
 
 Ctt : Itu bisa tambah nantinya
+sql db u998713482_sinilai
+username    : u998713482_admin
+password db : Gustamen1140

@@ -20,8 +20,8 @@
     
     <aside class="w-64 bg-[#65825C] text-white flex flex-col shadow-xl relative z-20">
         <div class="h-20 flex items-center px-6 border-b border-white/10">
-            <div class="w-10 h-10 rounded-full bg-blue-900 border-2 border-yellow-400 flex items-center justify-center mr-3">
-                <span class="text-[8px] font-bold text-center leading-tight">LOGO<br>SD</span>
+            <div class="w-12 h-12 mr-3 bg-white rounded-full border-2 border-yellow-400 overflow-hidden flex items-center justify-center shadow-sm">
+                <img src="{{ asset('images/SD.png') }}" alt="Logo SD" class="w-full h-full object-contain">
             </div>
             <div>
                 <h1 class="text-xl font-bold">SINILAI</h1>

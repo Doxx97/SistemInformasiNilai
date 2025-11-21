@@ -8,7 +8,9 @@
         
         <div class="text-center relative z-10">
             <div class="w-32 h-32 bg-blue-900 rounded-full border-4 border-yellow-400 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <span class="text-white font-bold text-xs text-center">LOGO<br>ALDENAIRE</span>
+                <img src="{{ asset('images/SD.png') }}" 
+                         alt="Logo Sekolah" 
+                         class="w-full h-full object-contain rounded-full">
             </div>
             <h2 class="text-white font-bold text-xl tracking-widest">ALDENAIRE</h2>
             <p class="text-white/80 text-sm">SEKOLAH DASAR</p>
