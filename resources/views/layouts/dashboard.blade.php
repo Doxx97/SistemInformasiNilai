@@ -14,7 +14,7 @@
         ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-gray-100">
+<div class="bg-gray-100">
 
 <div class="flex h-screen overflow-hidden">
     
@@ -91,10 +91,11 @@
         </nav>
 
         <div class="p-6 border-t border-white/10">
-            <form action="{{ route('logout') }}" method="POST">
-            @csrf
-                <button type="submit" class="flex items-center text-white/80 hover:text-white transition w-full text-left">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <form id="form-logout" action="{{ route('logout') }}" method="POST">
+                @csrf
+                
+                <button type="button" onclick="konfirmasiLogout()" class="flex items-center text-white/80 hover:text-white transition w-full text-left group">
+                    <svg class="w-5 h-5 mr-3 group-hover:text-red-300 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Log Out
                 </button>
             </form>
@@ -132,5 +133,28 @@
     </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function konfirmasiLogout() {
+            Swal.fire({
+                title: 'Ingin Keluar?',
+                text: "Sesi Anda akan diakhiri saat ini.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33', // Warna Merah untuk Logout
+                cancelButtonColor: '#3085d6', // Warna Biru untuk Batal
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal',
+                background: '#fff',
+                color: '#333'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika user klik Ya, submit form logout secara manual
+                    document.getElementById('form-logout').submit();
+                }
+            })
+        }
+    </script>
 </body>
 </html>

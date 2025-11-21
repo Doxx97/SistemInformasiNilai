@@ -7,10 +7,8 @@
         <div class="absolute w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
         
         <div class="text-center relative z-10">
-            <div class="w-32 h-32 bg-blue-900 rounded-full border-4 border-yellow-400 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <img src="{{ asset('images/SD.png') }}" 
-                         alt="Logo Sekolah" 
-                         class="w-full h-full object-contain rounded-full">
+            <div class="w-40 h-40 bg-white rounded-full border-4 border-yellow-400 shadow-2xl flex items-center justify-center overflow-hidden p-2 relative z-10 mb-6">
+                <img src="{{ asset('images/SD.png') }}" alt="Logo Sekolah" class="w-full h-full object-contain rounded-full">
             </div>
             <h2 class="text-white font-bold text-xl tracking-widest">ALDENAIRE</h2>
             <p class="text-white/80 text-sm">SEKOLAH DASAR</p>
