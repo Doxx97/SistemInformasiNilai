@@ -81,19 +81,25 @@ class WaliKelasController extends Controller
         return back()->with('success', 'Rapor ditarik kembali (Draft Mode).');
     }
 
-    public function cetakRapor($siswa_id)
+    public function cetakRapor($id)
     {
-        $guru = Auth::user();
-        // Pastikan yang akses adalah wali kelas siswa tsb
-        $siswa = User::findOrFail($siswa_id);
-        
-        if($siswa->kelas_id != $guru->kelasPerwalian->id){
-             abort(403, 'Anda bukan Wali Kelas siswa ini');
+        // 1. Ambil Tahun Ajaran yang AKTIF
+        $tahunAktif = \App\Models\TahunPelajaran::where('is_active', true)->first();
+
+        if (!$tahunAktif) {
+            return back()->with('error', 'Tahun pelajaran aktif belum diset!');
         }
 
-        $nilais = Nilai::where('siswa_id', $siswa_id)->with('mapel')->get();
+        // 2. Ambil Data Siswa & Mapel
+        $siswa = \App\Models\User::findOrFail($id);
+        $mapels = \App\Models\Mapel::all();
         
-        return view('guru.walikelas.rapor', compact('siswa', 'nilais', 'guru'));
+        // 3. Ambil Data Wali Kelas & Kelas
+        $kelas = $siswa->kelas;
+        $waliKelas = $kelas->waliKelas;
+
+        // 4. Kirim variabel $tahunAktif ke View
+        return view('guru.walikelas.rapor', compact('siswa', 'mapels', 'kelas', 'waliKelas', 'tahunAktif'));
     }
 
     // 1. FORM INPUT CATATAN
@@ -125,5 +131,60 @@ class WaliKelasController extends Controller
         ]);
 
         return redirect()->route('guru.walikelas.rekap')->with('success', 'Catatan untuk ' . $siswa->name . ' berhasil disimpan.');
+    }
+    // 1. TAMPILKAN HALAMAN KENAIKAN
+    public function indexKenaikan()
+    {
+        $guru = Auth::user();
+        // Cek apakah guru ini punya kelas
+        $kelas = $guru->kelasPerwalian;
+        
+        if(!$kelas) {
+            return back()->with('error', 'Anda bukan Wali Kelas.');
+        }
+
+        // Ambil semua siswa di kelas ini
+        $siswas = \App\Models\User::where('role', 'walimurid')
+                    ->where('kelas_id', $kelas->id)
+                    ->orderBy('name')
+                    ->get();
+        
+        // Ambil daftar SEMUA kelas (untuk target kenaikan)
+        $allKelas = \App\Models\Kelas::all();
+
+        return view('guru.walikelas.kenaikan', compact('kelas', 'siswas', 'allKelas'));
+    }
+
+    // 2. SIMPAN STATUS TEKS (Untuk Tampilan Rapor)
+    public function updateStatusKenaikan(Request $request)
+    {
+        $request->validate([
+            'siswa_id' => 'required',
+            'status' => 'required', // "Naik ke Kelas X" atau "Tinggal"
+        ]);
+
+        $siswa = \App\Models\User::findOrFail($request->siswa_id);
+        $siswa->update(['status_kenaikan' => $request->status]);
+
+        return back()->with('success', 'Status berhasil disimpan.');
+    }
+
+    // 3. EKSEKUSI PINDAH KELAS (Perubahan Data Fisik)
+    public function prosesNaikKelas(Request $request)
+    {
+        $request->validate([
+            'target_kelas_id' => 'required|exists:kelas,id',
+            'siswa_ids' => 'required|array' // Array ID siswa yang dipilih
+        ]);
+
+        // Pindahkan siswa-siswa yang dipilih ke kelas baru
+        \App\Models\User::whereIn('id', $request->siswa_ids)
+            ->update([
+                'kelas_id' => $request->target_kelas_id,
+                // Reset status kenaikan agar rapor tahun depan bersih
+                'status_kenaikan' => null 
+            ]);
+
+        return back()->with('success', 'Siswa berhasil dipindahkan ke kelas baru!');
     }
 }

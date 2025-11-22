@@ -3,161 +3,161 @@
 @section('content')
 <div class="space-y-6">
     
-    <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col md:flex-row justify-between items-center border-l-4 border-[#65825C]">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Dashboard Pengajar</h1>
-            <p class="text-gray-500 text-sm">Selamat datang, <span class="font-bold text-[#65825C]">{{ Auth::user()->name }}</span></p>
-        </div>
-        
-        <div class="mt-4 md:mt-0 flex items-center bg-gray-50 px-4 py-2 rounded-lg border border-gray-200">
-            <span class="text-xs font-bold text-gray-500 mr-3 uppercase tracking-wider">Tahun Ajaran:</span>
-            <form action="{{ route('guru.ganti.tahun') }}" method="POST">
-                @csrf
-                <select name="tahun_id" onchange="this.form.submit()" class="bg-transparent font-bold text-gray-700 text-sm focus:outline-none cursor-pointer">
-                    @foreach($listTahun as $t)
-                        <option value="{{ $t->id }}" {{ $selectedTahun->id == $t->id ? 'selected' : '' }}>
-                            {{ $t->tahun }} - {{ $t->semester }} {{ $t->is_active ? '(Aktif)' : '' }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
-        </div>
-    </div>
+    @php
+        $guru = Auth::user();
+        $tahunAktif = \App\Models\TahunPelajaran::where('is_active', true)->first();
+    @endphp
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white rounded-xl shadow-sm p-6 text-center">
-                <div class="w-28 h-28 mx-auto bg-gradient-to-br from-[#65825C] to-[#a3c966] rounded-full p-1 mb-4 shadow-lg">
-                    <div class="w-full h-full bg-white rounded-full overflow-hidden flex items-center justify-center relative">
-                        
-                        @if(Auth::user()->foto)
-                        <img src="{{ asset('storage/' . Auth::user()->foto) }}" alt="Profil" class="w-full h-full object-cover">
-                        @else
-                        {{-- Icon Default --}}
-                        <svg class="w-16 h-16 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                        @endif
-
-                    </div>
-                </div>
-                
-                <h2 class="font-bold text-xl text-gray-800">{{ Auth::user()->name }}</h2>
-                <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wide mt-2 inline-block">Guru Pengajar</span>
-                
-                <div class="mt-6 text-left space-y-3 border-t pt-4">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">NIP/NUPTK</span>
-                        <span class="font-semibold text-gray-700">{{ Auth::user()->username }}</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Status</span>
-                        <span class="font-semibold text-green-600">Aktif</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500">Total Kelas</span>
-                        <span class="font-semibold text-gray-700">{{ $groupedJadwal->flatten()->count() }} Kelas</span>
-                    </div>
-                </div>
+    <div class="bg-[#65825C] rounded-2xl p-6 md:p-10 text-white shadow-lg relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold mb-2">Halo, {{ $guru->name }}!</h1>
+                <p class="opacity-90 text-sm md:text-base">
+                    Selamat datang di Dashboard Guru. 
+                    @if($tahunAktif)
+                        Tahun Ajaran Aktif: <span class="font-bold text-yellow-300">{{ $tahunAktif->tahun }} ({{ $tahunAktif->semester }})</span>
+                    @else
+                        <span class="text-red-200 font-bold">Tahun Ajaran Belum Diset</span>
+                    @endif
+                </p>
             </div>
-
-            @if(Auth::user()->kelasPerwalian)
-            <div class="bg-green-600 bg-to-r from-green-500 to-yellow-500 rounded-xl shadow-md p-6 text-white relative overflow-hidden">
-                <div class="absolute right-0 top-0 opacity-10 transform translate-x-2 -translate-y-2">
-                    <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 20 20"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
-                </div>
-                <h3 class="text-lg font-bold mb-1">Tugas Tambahan</h3>
-                <p class="text-white/90 text-sm mb-4">Anda menjabat sebagai:</p>
-                <div class="bg-white/20 rounded-lg p-3 text-center backdrop-blur-sm border border-white/30">
-                    <span class="text-xl font-bold">Wali Kelas {{ Auth::user()->kelasPerwalian->nama_kelas }}</span>
-                </div>
-                <a href="{{ route('guru.walikelas.rekap') }}" class="block mt-4 text-center bg-white text-orange-600 text-sm font-bold py-2 rounded hover:bg-orange-50 transition">
-                    Buka Menu Wali Kelas
+            
+            {{-- Tombol Shortcut Wali Kelas (Hanya muncul jika dia Wali Kelas) --}}
+            @if($guru->kelasPerwalian)
+                <a href="{{ route('guru.walikelas.rekap') }}" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-3 rounded-full font-bold text-sm shadow-lg transition transform hover:scale-105 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    Masuk Menu Wali Kelas
                 </a>
-            </div>
             @endif
         </div>
 
-        <div class="lg:col-span-2">
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-[#65825C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        Jadwal Mengajar & Status Nilai
-                    </h3>
-                    <span class="bg-[#65825C] text-white text-xs px-2 py-1 rounded">{{ $selectedTahun->tahun }}</span>
-                </div>
+        <div class="absolute right-0 top-0 w-40 h-40 bg-white opacity-10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+        <div class="absolute left-0 bottom-0 w-24 h-24 bg-yellow-400 opacity-10 rounded-full blur-2xl -ml-5 -mb-5"></div>
+    </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-100 text-gray-600 uppercase text-xs font-bold tracking-wider">
-                            <tr>
-                                <th class="px-6 py-4 border-b">Mata Pelajaran</th>
-                                <th class="px-6 py-4 border-b">Kelas</th>
-                                <th class="px-6 py-4 border-b text-center">Status Nilai</th>
-                                <th class="px-6 py-4 border-b text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            @forelse($groupedJadwal as $namaMapel => $items)
-                                @foreach($items as $item)
-                                    @php
-                                        $status = \App\Models\StatusNilai::where('kelas_id', $item->kelas_id)
-                                                    ->where('mapel_id', $item->mapel_id)
-                                                    ->first();
-                                        $isTerkirim = $status && $status->status == 'terkirim';
-                                    @endphp
-                                    <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
-                                        <td class="px-6 py-4 font-medium text-gray-800">
-                                            <div class="flex items-center">
-                                                <div class="w-2 h-8 bg-[#65825C] rounded-full mr-3"></div>
-                                                {{ $namaMapel }}
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-md font-semibold text-xs border border-gray-200">
-                                                Kelas {{ $item->nama_kelas }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 text-center">
-                                            @if($isTerkirim)
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                                    Terkirim
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
-                                                    Belum Dikirim
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-6 py-4 text-center">
-                                            <a href="{{ route('guru.nilai.create', ['kelas_id' => $item->kelas_id, 'mapel_id' => $item->mapel_id]) }}" class="text-[#65825C] hover:text-[#4a6143] font-semibold text-xs hover:underline">
-                                                {{ $isTerkirim ? 'Edit Nilai' : 'Input Nilai' }} &rarr;
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="px-6 py-10 text-center text-gray-400">
-                                        <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                                        <p>Tidak ada jadwal mengajar pada tahun ajaran ini.</p>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-[#65825C] flex items-center gap-4">
+            <div class="w-16 h-16 flex-shrink-0 rounded-full border-2 border-gray-200 overflow-hidden bg-gray-100">
+                @if($guru->foto)
+                    <img src="{{ asset('storage/' . $guru->foto) }}" class="w-full h-full object-cover" alt="Foto Profil">
+                @else
+                    <svg class="w-full h-full text-gray-400 p-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+                @endif
             </div>
-            
-            <div class="mt-4 bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-start gap-3">
-                <svg class="w-5 h-5 text-blue-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <div class="text-sm text-blue-800">
-                    <p class="font-bold mb-1">Catatan Guru:</p>
-                    <p class="opacity-80">Pastikan Anda memilih tahun ajaran yang benar di bagian atas sebelum menginput nilai. Jika status "Terkirim", Anda masih dapat mengedit nilai selama akses belum ditutup oleh Admin.</p>
-                </div>
+            <div class="overflow-hidden">
+                <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Akun Guru</p>
+                <h3 class="font-bold text-gray-800 truncate">{{ $guru->name }}</h3>
+                <p class="text-xs text-green-600 font-mono mt-1">{{ $guru->username }}</p>
             </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-blue-500 flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Jadwal Mengajar</p>
+                {{-- Menghitung jumlah mapel yang diajar tahun ini --}}
+                @php
+                    $jumlahKelas = DB::table('guru_mapel')
+                                    ->where('user_id', $guru->id)
+                                    ->where('tahun_pelajaran_id', $tahunAktif->id ?? 0)
+                                    ->count();
+                @endphp
+                <p class="text-3xl font-bold text-gray-800 mt-1">{{ $jumlahKelas }} <span class="text-sm font-normal text-gray-400">Kelas</span></p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 {{ $guru->kelasPerwalian ? 'border-yellow-400' : 'border-gray-300' }} flex items-center justify-between">
+            <div>
+                <p class="text-gray-500 text-xs font-bold uppercase tracking-wider">Tugas Tambahan</p>
+                @if($guru->kelasPerwalian)
+                    <p class="text-xl font-bold text-gray-800 mt-1">Wali Kelas {{ $guru->kelasPerwalian->nama_kelas }}</p>
+                    <p class="text-xs text-green-600 mt-1">Aktif</p>
+                @else
+                    <p class="text-xl font-bold text-gray-400 mt-1">Tidak Ada</p>
+                    <p class="text-xs text-gray-400 mt-1">-</p>
+                @endif
+            </div>
+            <div class="w-12 h-12 {{ $guru->kelasPerwalian ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400' }} rounded-full flex items-center justify-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="font-bold text-gray-800">Jadwal Mengajar & Input Nilai</h3>
+            <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded">Tahun: {{ $tahunAktif->tahun ?? '-' }}</span>
+        </div>
+
+        {{-- WRAPPER AGAR BISA SCROLL DI HP --}}
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left min-w-[600px]">
+                <thead class="bg-gray-50 text-gray-600 font-bold uppercase text-xs">
+                    <tr>
+                        <th class="p-4">Mata Pelajaran</th>
+                        <th class="p-4">Kelas</th>
+                        <th class="p-4 text-center">Status Nilai</th>
+                        <th class="p-4 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @php
+                        // Ambil jadwal mengajar di tahun aktif
+                        $jadwals = DB::table('guru_mapel')
+                                    ->join('mapels', 'guru_mapel.mapel_id', '=', 'mapels.id')
+                                    ->join('kelas', 'guru_mapel.kelas_id', '=', 'kelas.id')
+                                    ->where('guru_mapel.user_id', $guru->id)
+                                    ->where('guru_mapel.tahun_pelajaran_id', $tahunAktif->id ?? 0)
+                                    ->select('mapels.nama_mapel', 'kelas.nama_kelas', 'kelas.id as kelas_id', 'mapels.id as mapel_id')
+                                    ->get();
+                    @endphp
+
+                    @forelse($jadwals as $jadwal)
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-4 font-bold text-gray-800">{{ $jadwal->nama_mapel }}</td>
+                        <td class="p-4">
+                            <span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-bold">
+                                {{ $jadwal->nama_kelas }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-center">
+                            {{-- Cek sekilas apakah sudah ada nilai --}}
+                            @php
+                                $cekNilai = \App\Models\Nilai::where('kelas_id', $jadwal->kelas_id)
+                                            ->where('mapel_id', $jadwal->mapel_id)
+                                            ->where('tahun_pelajaran_id', $tahunAktif->id ?? 0)
+                                            ->count();
+                            @endphp
+                            @if($cekNilai > 0)
+                                <span class="text-green-600 text-xs flex items-center justify-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Sudah Input ({{ $cekNilai }})
+                                </span>
+                            @else
+                                <span class="text-gray-400 text-xs italic">Belum ada nilai</span>
+                            @endif
+                        </td>
+                        <td class="p-4 text-right">
+                            <a href="{{ route('guru.nilai.create', ['kelas_id' => $jadwal->kelas_id, 'mapel_id' => $jadwal->mapel_id]) }}" 
+                               class="inline-flex items-center bg-[#65825C] hover:bg-[#546e4b] text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Input / Edit Nilai
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-gray-400">
+                            <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <p>Belum ada jadwal mengajar di tahun ajaran ini.</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

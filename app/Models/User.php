@@ -27,7 +27,8 @@ class User extends Authenticatable
 
         'foto',
         'tahun_masuk',
-        'catatan_wali_kelas'
+        'catatan_wali_kelas',
+        'status_kenaikan',
     ];
 
     /**

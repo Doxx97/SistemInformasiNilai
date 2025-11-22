@@ -61,6 +61,15 @@ Route::middleware(['auth', RoleMiddleware::class.':guru'])->group(function () {
     // Catatan Wali Kelas
     Route::get('/guru/walikelas/catatan/{siswa_id}', [WaliKelasController::class, 'formCatatan'])->name('guru.walikelas.catatan');
     Route::post('/guru/walikelas/catatan/{siswa_id}', [WaliKelasController::class, 'simpanCatatan'])->name('guru.walikelas.update_catatan');
+
+    // Halaman Menu Kenaikan Kelas
+    Route::get('/guru/walikelas/kenaikan', [App\Http\Controllers\Guru\WaliKelasController::class, 'indexKenaikan'])->name('guru.walikelas.kenaikan');
+
+// Proses Simpan Status (Hanya teks untuk Rapor)
+    Route::post('/guru/walikelas/kenaikan/update', [App\Http\Controllers\Guru\WaliKelasController::class, 'updateStatusKenaikan'])->name('guru.walikelas.update_status');
+
+// Proses PINDAH KELAS (Naik Kelas Fisik)
+    Route::post('/guru/walikelas/kenaikan/proses', [App\Http\Controllers\Guru\WaliKelasController::class, 'prosesNaikKelas'])->name('guru.walikelas.proses_naik');
 });
 
 // 4. Group Route Khusus WALI MURID
